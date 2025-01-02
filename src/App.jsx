@@ -10,10 +10,18 @@ import Footer from "./components/Footer";
 import ShoppingCart from "./components/ShoppingCart";
 import Chatbot from "./components/Chatbot";
 import OrderDetails from "./components/OrderDetails";
+import ProductDetails from "./components/ProductDetails";
+
 
 const App = () => {
   const [cart, setCart] = useState([]);
-  
+  const [darkMode, setDarkMode] = useState(false);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.documentElement.classList.toggle('dark', !darkMode);
+  };
+
   // Define categories
   const categories = [
     "All",
@@ -54,10 +62,10 @@ const App = () => {
   return (
     <Router>
       <div className="flex flex-col min-h-screen bg-gray-50">
-        {/* Header with cart count and categories */}
         <Header 
           cartCount={cart.reduce((acc, item) => acc + item.quantity, 0)} 
           categories={categories} 
+          darkMode={darkMode} toggleDarkMode={toggleDarkMode}
         />
 
         <Routes>
@@ -78,6 +86,15 @@ const App = () => {
             }
           />
 
+          {/* Product List Page */}
+          <Route
+            path="/products"
+            element={<ProductList addToCart={addToCart} categories={categories} />}
+          />
+           <Route
+          path="/products/:id"
+          element={<ProductDetails addToCart={addToCart} />}
+        />
           {/* Shopping Cart Page */}
           <Route
             path="/cart"

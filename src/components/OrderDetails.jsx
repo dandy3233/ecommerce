@@ -57,7 +57,7 @@ pdf.text("Order Details", pdfWidth / 2, 40, { align: "center" });
   };
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen flex flex-col items-center">
+    <div className="p-8 mt-[12vh] bg-gray-50 min-h-screen flex flex-col items-center">
       <h1 className="text-3xl font-extrabold mb-6 text-green-600">Order Details</h1>
       <p className="text-lg text-gray-700">Your order has been placed successfully!</p>
 
@@ -83,7 +83,8 @@ pdf.text("Order Details", pdfWidth / 2, 40, { align: "center" });
                 key={index}
                 className="flex justify-between items-center bg-gray-100 rounded-lg p-4"
               >
-                <span className="font-medium">{item.name}</span>
+                <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded" />
+                <span className="font-medium">{item.title}</span>
                 <span className="text-gray-600">
                   {item.quantity} × ${item.price.toFixed(2)}
                 </span>

@@ -8,8 +8,18 @@ export default {
     extend: {
       animation: {
         'shadow-cycle': 'shadow-cycle 2s infinite', // Animation duration and loop
+        fadeIn: 'fadeIn 1s ease-in-out',
+        fadeInUp: 'fadeInUp 1s ease-in-out',
       },
       keyframes: {
+        fadeIn: {
+          '0%': { opacity: 0 },
+          '100%': { opacity: 1 },
+        },
+        fadeInUp: {
+          '0%': { opacity: 0, transform: 'translateY(20px)' },
+          '100%': { opacity: 1, transform: 'translateY(0)' },
+        },
         'shadow-cycle': {
           '0%': { 
             boxShadow: '0 0 10px rgba(0, 255, 255, 0.4)',  // Cyan shadow with low opacity
@@ -35,5 +45,6 @@ export default {
       },
     },
   },
+  darkMode: 'class', // Enables dark mode
   plugins: [],
 }

@@ -1,68 +1,118 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch, faShoppingCart } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 
 const ProductList = ({ addToCart }) => {
-  // Updated products array
-  const initialProducts = [
-    { id: 1, name: "HP Spectre x360 14", price: 260, originalPrice: 240, imageUrl: "https://via.placeholder.com/150", rating: 4, category: "Laptops" },
-    { id: 2, name: "iPhone 15", price: 100, originalPrice: 150, imageUrl: "https://via.placeholder.com/150", rating: 5, category: "Smartphones" },
-    { id: 3, name: "Cozy Family Home", price: 110000, originalPrice: 120000, imageUrl: "https://via.placeholder.com/150", rating: 3, category: "Real Estate" },
-    { id: 4, name: "Sofa Set", price: 800, originalPrice: 900, imageUrl: "https://via.placeholder.com/150", rating: 4, category: "Furniture" },
-    { id: 5, name: "Men's Jacket", price: 120, originalPrice: 150, imageUrl: "https://via.placeholder.com/150", rating: 4, category: "Clothing" },
-    { id: 6, name: "Leather Watch", price: 50, originalPrice: 70, imageUrl: "https://via.placeholder.com/150", rating: 3, category: "Accessories" },
-    { id: 7, name: "Learning React", price: 30, originalPrice: 40, imageUrl: "https://via.placeholder.com/150", rating: 5, category: "Books" },
-    { id: 8, name: "Smart TV", price: 300, originalPrice: 350, imageUrl: "https://via.placeholder.com/150", rating: 4, category: "Electronics" },
-    { id: 9, name: "Lego Set", price: 80, originalPrice: 100, imageUrl: "https://via.placeholder.com/150", rating: 5, category: "Toys" },
-    { id: 10, name: "Organic Apples", price: 5, originalPrice: 8, imageUrl: "https://via.placeholder.com/150", rating: 4, category: "Groceries" },
-    { id: 11, name: "Yoga Mat", price: 25, originalPrice: 30, imageUrl: "https://via.placeholder.com/150", rating: 4, category: "Sports Equipment" },
-    { id: 12, name: "Face Cream", price: 15, originalPrice: 20, imageUrl: "https://via.placeholder.com/150", rating: 4, category: "Beauty Products" },
-  ];
-
-  // Categories for filtering
-  const categories = ["All", "Laptops", "Smartphones", "Real Estate", "Furniture", "Clothing", "Accessories", "Books", "Electronics", "Toys", "Groceries", "Sports Equipment", "Beauty Products"];
-
-  // Price categories for filtering
-  const priceCategories = [
-    { label: "All", min: 0, max: Infinity },
-    { label: "$0 - $50", min: 0, max: 50 },
-    { label: "$50 - $100", min: 50, max: 100 },
-    { label: "$100+", min: 100, max: Infinity },
-  ];
-
-  // Star ratings for filtering
-  const starRatings = [1, 2, 3, 4, 5];
-
-  // States for managing filters
-  const [products] = useState(initialProducts);
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedPriceCategory, setSelectedPriceCategory] = useState("All");
-  const [selectedRating, setSelectedRating] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [priceRange, setPriceRange] = useState([0, 5000]);
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [selectedRange, setSelectedRange] = useState(null);
 
-  // Filtered products based on selected filters
-  const filteredProducts = products
-    .filter((product) =>
-      selectedCategory === "All" ? true : product.category === selectedCategory
-    )
-    .filter((product) => {
-      const priceFilter = priceCategories.find(
-        (p) => p.label === selectedPriceCategory
-      );
-      return priceFilter
-        ? product.price >= priceFilter.min && product.price <= priceFilter.max
-        : true;
-    })
-    .filter((product) =>
-      selectedRating === "All" ? true : product.rating === Number(selectedRating)
-    )
-    .filter((product) =>
-      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const priceRanges = [
+    { label: "Under 3.9 K", min: 0, max: 3900 },
+    { label: "3.9 - 39 K", min: 3900, max: 39000 },
+    { label: "39 - 85 K", min: 39000, max: 85000 },
+    { label: "85 - 180 K", min: 85000, max: 180000 },
+    { label: "More than 180 K", min: 180000, max: Infinity },
+  ];
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("https://fakestoreapi.com/products");
+        const data = await response.json();
+        setProducts(data);
+        setFilteredProducts(data);
+        const uniqueCategories = [
+          "All",
+          ...new Set(data.map((product) => product.category)),
+        ];
+        setCategories(uniqueCategories);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    const applyFilters = () => {
+      const filtered = products
+        .filter((product) =>
+          selectedCategory === "All"
+            ? true
+            : product.category === selectedCategory
+        )
+        .filter((product) => {
+          const productPrice = product.price;
+          const min = selectedRange
+            ? priceRanges[selectedRange].min
+            : parseFloat(minPrice) || 0;
+          const max = selectedRange
+            ? priceRanges[selectedRange].max
+            : parseFloat(maxPrice) || 5000;
+          return productPrice >= min && productPrice <= max;
+        })
+        .filter((product) =>
+          product.title.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+
+      setFilteredProducts(filtered);
+    };
+
+    applyFilters();
+  }, [products, selectedCategory, selectedRange, minPrice, maxPrice, searchQuery]);
+
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    setSelectedCategory("All");
+    setMinPrice('');
+    setMaxPrice('');
+    setSelectedRange(null);
+  };
+
+  // Highlight the matched text in the product title
+  const highlightText = (text, query) => {
+    if (!query) return text;
+    const regex = new RegExp(`(${query})`, "gi");
+    return text.split(regex).map((part, index) =>
+      part.toLowerCase() === query.toLowerCase() ? (
+        <span key={index} className="bg-yellow-300">{part}</span>
+      ) : (
+        part
+      )
     );
+  };
 
   return (
-    <section className="p-4 sm:p-8 bg-white flex flex-col sm:flex-row gap-6">
+    <section className="p-4 sm:p-8 bg-white dark:bg-gray-900 flex flex-col sm:flex-row gap-6 animate-fadeIn mt-[7vh]">
+      
       {/* Sidebar */}
-      <aside className="w-full sm:w-1/4 bg-gray-100 p-4 rounded shadow-md">
+      <aside className="w-full sm:w-1/4 bg-gray-100 p-4 rounded shadow-md animate-fadeInUp">
         <h3 className="text-lg font-semibold mb-4">Filters</h3>
+
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="flex items-center border border-blue-600 rounded-full overflow-hidden">
+            <span className="px-2 text-gray-500">
+              <FontAwesomeIcon icon={faSearch} />
+            </span>
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 px-4 py-2 rounded-full focus:outline-none"
+            />
+          </div>
+        </div>
 
         {/* Category Filter */}
         <div className="mb-4">
@@ -70,7 +120,7 @@ const ProductList = ({ addToCart }) => {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-400 rounded"
+            className="w-full px-4 py-2 border border-blue-600 rounded"
           >
             {categories.map((category, index) => (
               <option key={index} value={category}>
@@ -80,86 +130,128 @@ const ProductList = ({ addToCart }) => {
           </select>
         </div>
 
-        {/* Price Filter */}
+        {/* Price Range Filter (with radio buttons) */}
         <div className="mb-4">
-          <h4 className="text-md font-medium mb-2">Price</h4>
-          <select
-            value={selectedPriceCategory}
-            onChange={(e) => setSelectedPriceCategory(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-400 rounded"
-          >
-            {priceCategories.map((price, index) => (
-              <option key={index} value={price.label}>
-                {price.label}
-              </option>
+          <h4 className="text-md font-medium mb-2">Price Range</h4>
+          <div className="flex flex-wrap gap-4">
+            {priceRanges.map((range, index) => (
+              <div key={index} className="flex items-center">
+                <input
+                  type="radio"
+                  id={`r-${index}`}
+                  value={index}
+                  checked={selectedRange === index}
+                  onChange={() => {
+                    setSelectedRange(index);
+                    setMinPrice('');
+                    setMaxPrice('');
+                  }}
+                  className="mr-2"
+                />
+                <label htmlFor={`r-${index}`} className="text-sm">{range.label}</label>
+              </div>
             ))}
-          </select>
+          </div>
         </div>
 
-        {/* Star Rating Filter */}
+        {/* Custom Price Range */}
         <div className="mb-4">
-          <h4 className="text-md font-medium mb-2">Star Rating</h4>
-          <select
-            value={selectedRating}
-            onChange={(e) => setSelectedRating(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-400 rounded"
-          >
-            <option value="All">All Ratings</option>
-            {starRatings.map((rating) => (
-              <option key={rating} value={rating}>
-                {"⭐".repeat(rating)}+
-              </option>
-            ))}
-          </select>
+          <h4 className="text-md font-medium mb-2">Custom Price Range</h4>
+          <div className="flex items-center mb-4">
+            <div className="flex-1">
+              <label htmlFor="min-price" className="block text-sm">Min</label>
+              <input
+                id="min-price"
+                value={minPrice}
+                type="number"
+                onChange={(e) => {
+                  setMinPrice(e.target.value);
+                  setSelectedRange(null); // Reset the radio button selection when custom range is used
+                }}
+                className="w-full px-4 py-2 border border-blue-600 rounded"
+              />
+            </div>
+            <div className="mx-2">
+              <span>-</span>
+            </div>
+            <div className="flex-1">
+              <label htmlFor="max-price" className="block text-sm">Max</label>
+              <input
+                id="max-price"
+                value={maxPrice}
+                type="number"
+                onChange={(e) => {
+                  setMaxPrice(e.target.value);
+                  setSelectedRange(null); // Reset the radio button selection when custom range is used
+                }}
+                className="w-full px-4 py-2 border border-blue-600 rounded"
+              />
+            </div>
+          </div>
         </div>
+
+        {/* Clear Filters */}
+        <div className="mt-6">
+          <button
+            onClick={handleClearFilters}
+            className="w-full px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+          >
+            Clear Filters
+          </button>
+        </div>
+
       </aside>
 
-      {/* Main Content */}
-      <div className="w-full sm:w-3/4">
-        {/* Search Bar */}
-        <div className="mb-6">
-          <input
-            type="text"
-            placeholder="Search products..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="px-4 py-2 border border-gray-400 rounded w-full"
-          />
-        </div>
+      {/* Product List */}
+      <main className="w-full sm:w-3/4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {filteredProducts.map((product) => (
+          <div
+            key={product.id}
+            className="bg-white p-4 border rounded-lg shadow hover:shadow-lg transition-transform transform hover:scale-105 animate-fadeInUp"
+          >
+            <img
+              src={product.image}
+              alt={product.title}
+              className="w-full h-40 object-contain mb-4"
+            />
 
-        {/* Product List */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
-            <div
-              key={product.id}
-              className="border-2 border-blue-600 p-4 rounded-lg text-center shadow-lg"
-            >
-              <img
-                src={product.imageUrl}
-                alt={product.name}
-                className="w-full h-40 object-cover mb-4 rounded"
-              />
-              <h3 className="font-semibold text-gray-700">{product.name}</h3>
-              <p className="text-yellow-500 font-bold">
-                ${product.price.toFixed(2)}
+            {/* Always display the category */}
+            <div className="flex items-center py-1">
+              <svg
+                stroke="currentColor"
+                fill="currentColor"
+                strokeWidth="0"
+                viewBox="0 0 384 512"
+                className="mr-2 text-gray-500"
+                height="1em"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M0 512V48C0 21.49 21.49 0 48 0h288c26.51 0 48 21.49 48 48v464L192 400 0 512z"></path>
+              </svg>
+              <p className="text-gray-500">{product.category}</p>
+            </div>
+
+            <Link to={`/products/${product.id}`}>
+              <h3 className="text-gray-900 line-clamp-1 font-semibold text-lg tracking-tight ">
+                {highlightText(product.title, searchQuery)}
+              </h3>
+            </Link>
+
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-primary text-lg font-bold">
+                {(product.price)} ETB
               </p>
-              <p className="line-through text-gray-500">
-                ${product.originalPrice.toFixed(2)}
-              </p>
-              <div className="text-yellow-400 mb-2">
-                {"⭐".repeat(product.rating)}{" "}
-                {"☆".repeat(5 - product.rating)}
-              </div>
               <button
-                className="bg-blue-600 text-white px-4 py-2 rounded mt-4"
+                className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-gray-700 transform transition-transform duration-300 hover:scale-125"
                 onClick={() => addToCart(product)}
               >
-                Add to Cart
+                <FontAwesomeIcon icon={faShoppingCart} />
               </button>
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        ))}
+      </main>
     </section>
   );
 };
