@@ -10,7 +10,7 @@ const BannerSection = () => {
   };
 
   return (
-      <section className="bg-[#f5e6e0] mt-[12vh] dark:bg-[#2d2d2d] py-8 lg:py-16 px-4">
+      <section className="bg-[#f5e6e0] mt-[8vh] dark:bg-[#2d2d2d] py-8 lg:py-16 px-4">
         <div className="container mx-auto flex flex-col-reverse lg:flex-row items-center justify-between">
           {/* Text Content */}
           <div

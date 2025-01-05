@@ -42,11 +42,11 @@ const Header = ({ cartCount }) => {
   return (
     <Disclosure
       as="nav"
-      className="bg-gradient-to-r from-gray-100 via-white to-blue-100 p-4 rounded-lg py-2 fixed w-full z-10 transition-all duration-200"
+      className="bg-[#f5e6e0] p-4 rounded-lg py-2 fixed w-full z-10 transition-all duration-200"
     >
       {({ open }) => (
         <>
-          <div className="container mx-auto flex justify-between items-center">
+          <div className="container  mx-auto flex justify-between items-center">
             {/* Logo Section with Animation */}
             <Link to="/" className="flex items-center">
               <img
