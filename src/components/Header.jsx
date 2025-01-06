@@ -15,6 +15,7 @@ import bannerImage from "../assets/logo.png";
 const navigation = [
   { name: "HOME", href: "/", current: false, icon: <FaHome /> }, // Home icon from react-icons
   { name: "PRODUCT", href: "/products", current: false, icon: <FaProductHunt /> }, // Product icon from react-icons
+  { name: "DASHBOARD", href: "/dashboard", current: location.pathname === "/dashboard" },
 ];
 
 function classNames(...classes) {

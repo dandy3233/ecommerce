@@ -11,7 +11,9 @@ import ShoppingCart from "./components/ShoppingCart";
 import Chatbot from "./components/Chatbot";
 import OrderDetails from "./components/OrderDetails";
 import ProductDetails from "./components/ProductDetails";
-
+import Dashboard from "./components/Dashboard";
+import Sidebar from "./components/Sidebar";
+import ProductForm from "./components/ProductForm";
 
 const App = () => {
   const [cart, setCart] = useState([]);
@@ -91,10 +93,10 @@ const App = () => {
             path="/products"
             element={<ProductList addToCart={addToCart} categories={categories} />}
           />
-           <Route
-          path="/products/:id"
-          element={<ProductDetails addToCart={addToCart} />}
-        />
+          <Route
+            path="/products/:id"
+            element={<ProductDetails addToCart={addToCart} />}
+          />
           {/* Shopping Cart Page */}
           <Route
             path="/cart"
@@ -119,6 +121,10 @@ const App = () => {
               />
             }
           />
+          {/* Dashboard Route */}
+          <Route path="/dashboard" element={<Dashboard cart={cart} />} />
+          {/* Add Product Route */}
+          <Route path="/add-product" element={<ProductForm />} />
         </Routes>
 
         {/* Footer */}
