@@ -14,7 +14,7 @@ const Sidebar = () => {
     <>
       {/* Button to toggle sidebar on small screens */}
       <button
-        className="lg:hidden p-4  mt-[8vh] text-xl text-white bg-blue-500 fixed top-4 left-4 z-50"
+        className=" p-4  mt-[8vh] text-xl text-white bg-blue-500 fixed top-4 left-4 z-50"
         onClick={toggleSidebar}
       >
         _
