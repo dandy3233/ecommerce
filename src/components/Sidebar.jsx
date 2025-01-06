@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom"; // Import Link for routing
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // Import FontAwesomeIcon
+import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons"; // Import the arrow icons
 import bannerImage from "../assets/logo.png"; // Replace with your logo image path
 
 const Sidebar = () => {
@@ -14,10 +16,14 @@ const Sidebar = () => {
     <>
       {/* Button to toggle sidebar on small screens */}
       <button
-        className=" p-4  mt-[8vh] text-xl text-white bg-blue-500 fixed top-4 left-4 z-50"
+        className="p-2 rounded-full mt-[8vh] text-xl text-white bg-gray-700 fixed top-4 left-4 z-50"
         onClick={toggleSidebar}
       >
-        _
+        {/* Font Awesome arrow icons toggle based on the sidebar state */}
+        <FontAwesomeIcon
+          icon={isSidebarOpen ? faChevronLeft : faChevronRight}
+          className="w-6 h-6"
+        />
       </button>
 
       {/* Sidebar */}
