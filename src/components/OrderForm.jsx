@@ -171,21 +171,22 @@ const OrderForm = ({ products }) => {
             />
           </div>
 
-          {/* Zip Code
+          
+           {/* phone number */}
           <div>
-            <label htmlFor="zip" className="block text-sm font-medium text-gray-700">
-              Zip Code
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+              Phone number
             </label>
             <input
               type="text"
-              id="zip"
-              name="zip"
-              value={formData.zip}
+              id="phone"
+              name="phone"
+              value={formData.phone}
               onChange={handleChange}
               className="mt-1 block w-full h-12 bg-gray-50 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               required
             />
-          </div> */}
+          </div>
 
           {/* Submit Button */}
           <button
