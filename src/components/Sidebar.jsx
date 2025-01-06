@@ -41,7 +41,7 @@ const Sidebar = () => {
             </li>
             {/* Link to the Add Product form */}
             <li className="py-2 px-4 hover:bg-gray-200 cursor-pointer border-2 border-gray-300 rounded-full transition-all duration-300 hover:border-blue-500">
-              <Link to="/add-product">Products</Link>
+              <Link to="/add-product">Add Products</Link>
             </li>
             <li className="py-2 px-4 hover:bg-gray-200 cursor-pointer border-2 border-gray-300 rounded-full transition-all duration-300 hover:border-blue-500">
               Orders
